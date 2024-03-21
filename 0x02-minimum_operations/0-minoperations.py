@@ -1,19 +1,27 @@
 #!/usr/bin/python3
+"""Module for Minimum operations algorithm"""
+
 
 def minOperations(n):
-    if n == 1:
+    """
+    Calculates fewest number of operations needed to result
+    in exactly n 'H' characters in a file
+    """
+    # check for invalid inputs
+    if n is None or n < 1:
         return 0
 
+    # initialize variables
     operations = 0
-    divisor = 2
+    factors = 2 # every number has a factor of 1 and itself
 
-    while divisor * divisor <= n:
-        while n % divisor == 0:
-            operations += divisor
-            n //= divisor
-        divisor += 1
+    # iterate through all factors of n and add them to the operations count
+    while factors <= n:
+        while n % factors == 0:
+            operations += factors
+            n //= factors
+        # increment factors
+        factors += 1
 
-    if n > 1:
-        operations += n
-
+    # return the operations count
     return operations
