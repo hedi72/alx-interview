@@ -1,56 +1,56 @@
 #!/usr/bin/python3
+"""Module N queens
+"""
 import sys
 
-def is_safe(board, row, col):
-    # Check if there is a queen in the same column
-    for i in range(row):
-        if board[i] == col:
-            return False
 
-        # Check diagonals
-        if abs(board[i] - col) == abs(i - row):
-            return False
+def solutions_generate(row, col):
+    solution = [[]]
+    for queen in range(row):
+        solution = place_n_queen(queen, col, solution)
+    return solution
 
-    return True
 
-def solve_n_queens(n):
-    def solve(board, row):
-        if row == n:
-            solutions.append(list(enumerate(board)))
-            return
+def place_n_queen(queen, col, previous_solution):
+    safe_position = []
+    for array in previous_solution:
+        for x in range(col):
+            if is_safe(queen, x, array):
+                safe_position.append(array + [x])
+    return safe_position
 
-        for col in range(n):
-            if is_safe(board, row, col):
-                board[row] = col
-                solve(board, row + 1)
-                board[row] = -1
 
-    solutions = []
-    board = [-1] * n
-    solve(board, 0)
-    return solutions
+def is_safe(q, value, array):
+    if value in array:
+        return (False)
+    else:
+        return all(abs(array[col] - value) != q - col
+                   for col in range(q))
 
-def print_solutions(solutions):
-    for solution in solutions:
-        print(solution)
 
-def main():
+def n_queens():
+
     if len(sys.argv) != 2:
-        print("Usage: nqueens N")
+        print('Usage: nqueens N')
         sys.exit(1)
 
     try:
-        n = int(sys.argv[1])
+        if int(sys.argv[1]) < 4:
+            print('N must be at least 4')
+            sys.exit(1)
     except ValueError:
-        print("N must be a number")
+        print('N must be a number')
         sys.exit(1)
+    n = int(sys.argv[1])
 
-    if n < 4:
-        print("N must be at least 4")
-        sys.exit(1)
+    solutions = solutions_generate(n, n)
 
-    solutions = solve_n_queens(n)
-    print_solutions(solutions)
+    for array in solutions:
+        new_arr = []
+        for index, value in enumerate(array):
+            new_arr.append([index, value])
+        print(new_arr)
 
-if __name__ == "__main__":
-    main()
+
+if __name__ == '__main__':
+    n_queens()
