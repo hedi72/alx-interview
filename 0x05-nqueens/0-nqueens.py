@@ -1,57 +1,60 @@
-#!/usr/bin/python3
-"""This script solves the N queens problem"""
 
+#!/usr/bin/python3
+"""doc doc doc"""
 import sys
 
 
-if (len(sys.argv) != 2):
-    print("Usage: nqueens N")
-    exit(1)
+def solve_queens_problem(board_size):
+    """doc doc doc"""
 
-try:
-    n = int(sys.argv[1])
-except ValueError:
-    print("N must be a number")
-    exit(1)
-if (n < 4):
-    print("N must be at least 4")
-    exit(1)
+    def is_valid_position(pos, occupied_pos):
+        """doc doc doc"""
+        for i in range(len(occupied_pos)):
+            if (
+                occupied_pos[i] == pos or
+                occupied_pos[i] - i == pos - len(occupied_pos) or
+                occupied_pos[i] + i == pos + len(occupied_pos)
+            ):
+                return False
+        return True
 
-
-def n_queens(n):
-    """this function solves the N queens puzzle"""
-
-    columns = set()
-    down_diag = set()
-    up_diag = set()
-
-    result = []
-
-    def backtrack(board, row):
-        """performing backtrack algorithm"""
-        if row == n:
-            new_board = [[i, board[i]] for i in range(n)]
-            result.append(new_board)
+    def place_queens(board_size, index, occupied_pos, solutions):
+        """doc doc doc"""
+        if index == board_size:
+            solutions.append(occupied_pos[:])
             return
-        for col in range(n):
-            if col in columns or \
-                (row + col) in down_diag or \
-                    (row - col) in up_diag:
-                continue
 
-            columns.add(col)
-            down_diag.add(col + row)
-            up_diag.add(row - col)
-            board[row] = col
-            backtrack(board, row + 1)
-            columns.remove(col)
-            down_diag.remove(col + row)
-            up_diag.remove(row - col)
+        for i in range(board_size):
+            if is_valid_position(i, occupied_pos):
+                occupied_pos.append(i)
+                place_queens(board_size, index + 1, occupied_pos, solutions)
+                occupied_pos.pop()
 
-    backtrack([None] * n, 0)
-    return result
+    solutions = []
+    place_queens(board_size, 0, [], solutions)
+    return solutions
 
 
-solutions = n_queens(n)
-for s in solutions:
-    print(s)
+def main():
+    """doc doc doc"""
+    if len(sys.argv) != 2:
+        print("Usage: nqueens N")
+        sys.exit(1)
+
+    try:
+        board_size = int(sys.argv[1])
+    except ValueError:
+        print("N must be a number")
+        sys.exit(1)
+
+    if board_size < 4:
+        print("N must be at least 4")
+        sys.exit(1)
+
+    solutions = solve_queens_problem(board_size)
+    for solution in solutions:
+        print([[i, solution[i]] for i in range(len(solution))])
+
+
+if __name__ == "__main__":
+    main()
