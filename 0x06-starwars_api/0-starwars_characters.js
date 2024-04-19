@@ -1,10 +1,10 @@
 #!/usr/bin/node
 
 const request = require("request");
-const idd = process.argv[2];
+const id = process.argv[2];
 
-const findMovie = (idd) => {
-  const url = `https://swapi-api.alx-tools.com/api/films/${idd}`;
+const findMovie = (id) => {
+  const url = `https://swapi-api.alx-tools.com/api/films/${id}`;
 
   request(url, (error, response, body) => {
     if (error) {
@@ -26,4 +26,4 @@ const findMovie = (idd) => {
   });
 };
 
-findMovie(idd);
+findMovie(id);
