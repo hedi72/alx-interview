@@ -1,31 +1,28 @@
 #!/usr/bin/node
-
 const request = require("request");
-
 const movieId = process.argv[2];
-const movieEndpoint = "https://swapi-api.alx-tools.com/api/films/" + movieId;
-
-function sendRequest(characterList, index) {
-  if (characterList.length === index) {
-    return;
-  }
-
-  request(characterList[index], (error, response, body) => {
-    if (error) {
-      console.log(error);
-    } else {
-      console.log(JSON.parse(body).name);
-      sendRequest(characterList, index + 1);
-    }
-  });
-}
-
-request(movieEndpoint, (error, response, body) => {
+const starWarsAPI = `https://swapi-api.alx-tools.com/api/films/${movieId}`;
+request(starWarsAPI, function (error, res, body) {
   if (error) {
-    console.log(error);
-  } else {
-    const characterList = JSON.parse(body).characters;
-
-    sendRequest(characterList, 0);
+    console.log("Error", error);
+  }
+  const charactersURL = JSON.parse(body).characters;
+  const size = charactersURL.length;
+  const array = Array(size).fill();
+  let count = 0;
+  for (let i = 0; i < size; i++) {
+    request(charactersURL[i], function (error, res, body) {
+      if (error) {
+        console.log(error);
+      } else {
+        array[i] = JSON.parse(body).name;
+        count++;
+      }
+      if (count === size) {
+        for (let j = 0; j < size; j++) {
+          console.log(array[j]);
+        }
+      }
+    });
   }
 });
