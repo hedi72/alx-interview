@@ -1,59 +1,21 @@
 #!/usr/bin/node
 
-const request = require("request");
+const util = require("util");
+const request = util.promisify(require("request"));
+const filmID = process.argv[2];
 
-const movieId = process.argv[2];
+async function starwarsCharacters(filmId) {
+  const endpoint = "https://swapi-api.hbtn.io/api/films/" + filmId;
+  let response = await (await request(endpoint)).body;
+  response = JSON.parse(response);
+  const characters = response.characters;
 
-const url = `https://swapi-api.hbtn.io/api/films/${movieId}`;
-
-request.get(url, (error, response, body) => {
-  if (error) {
-    console.error(error);
-    return;
+  for (let i = 0; i < characters.length; i++) {
+    const urlCharacter = characters[i];
+    let character = await (await request(urlCharacter)).body;
+    character = JSON.parse(character);
+    console.log(character.name);
   }
+}
 
-  if (response.statusCode !== 200) {
-    console.error(
-      `Failed to fetch movie data. Status code: ${response.statusCode}`
-    );
-    return;
-  }
-
-  const charactersArray = JSON.parse(body).characters;
-
-  function fetchCharacter(characterUrl) {
-    return new Promise((resolve, reject) => {
-      request.get(characterUrl, (error, response, body) => {
-        if (error) {
-          reject(new Error(error));
-          return;
-        }
-
-        if (response.statusCode !== 200) {
-          reject(
-            new Error(
-              `Failed to fetch character data. Status code: ${response.statusCode}`
-            )
-          );
-          return;
-        }
-
-        const characterName = JSON.parse(body).name;
-        console.log(characterName);
-        resolve();
-      });
-    });
-  }
-
-  async function fetchAndPrintCharacters() {
-    for (const characterUrl of charactersArray) {
-      try {
-        await fetchCharacter(characterUrl);
-      } catch (error) {
-        console.error(error.message);
-      }
-    }
-  }
-
-  fetchAndPrintCharacters();
-});
+starwarsCharacters(filmID);
