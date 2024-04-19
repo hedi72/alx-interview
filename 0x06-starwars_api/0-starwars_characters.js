@@ -1,28 +1,29 @@
 #!/usr/bin/node
-const request = require("request");
-const movieId = process.argv[2];
-const starWarsAPI = `https://swapi-api.alx-tools.com/api/films/${movieId}`;
-request(starWarsAPI, function (error, res, body) {
-  if (error) {
-    console.log("Error", error);
-  }
-  const charactersURL = JSON.parse(body).characters;
-  const size = charactersURL.length;
-  const array = Array(size).fill();
-  let count = 0;
-  for (let i = 0; i < size; i++) {
-    request(charactersURL[i], function (error, res, body) {
-      if (error) {
-        console.log(error);
-      } else {
-        array[i] = JSON.parse(body).name;
-        count++;
-      }
-      if (count === size) {
-        for (let j = 0; j < size; j++) {
-          console.log(array[j]);
+
+const request = require('request');
+const id = process.argv[2];
+
+const findMovie = (id) => {
+  const url = `https://swapi-api.alx-tools.com/api/films/${id}`;
+
+  request(url, (error, response, body) => {
+    if (error) {
+      console.error('Error:', error);
+      return;
+    }
+    const data = JSON.parse(body);
+    const charactersLinks = data.characters;
+    for (const link of charactersLinks) {
+      request(link, (err, res, body) => {
+        if (err) {
+          console.error('Error:', err);
+          return;
         }
-      }
-    });
-  }
-});
+        const characterData = JSON.parse(body);
+        return characterData.name;
+      });
+    }
+  });
+};
+
+findMovie(id);
