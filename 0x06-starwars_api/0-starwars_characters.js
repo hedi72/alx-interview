@@ -1,39 +1,28 @@
 #!/usr/bin/node
-const request = require("request");
-
+const request = require('request');
 const movieId = process.argv[2];
-
-const SWAPI_URL = `https://swapi-api.alx-tools.com/api/films/${movieId}`;
-
-request.get(SWAPI_URL, (error, response, body) => {
+const starWarsAPI = `https://swapi-api.alx-tools.com/api/films/${movieId}`;
+request(starWarsAPI, function (error, res, body) {
   if (error) {
-    console.error("Error:", error);
-    return;
+    console.log('Error', error);
   }
-
-  if (response.statusCode !== 200) {
-    console.error("Status:", response.statusCode);
-    return;
-  }
-
-  const film = JSON.parse(body);
-  const charactersUrls = film.characters;
-
-  // Fetch characters' names
-  charactersUrls.forEach((characterUrl) => {
-    request.get(characterUrl, (error, response, body) => {
+  const charactersURL = JSON.parse(body).characters;
+  const size = charactersURL.length;
+  const array = Array(size).fill();
+  let count = 0;
+  for (let i = 0; i < size; i++) {
+    request(charactersURL[i], function (error, res, body) {
       if (error) {
-        console.error("Error:", error);
-        return;
+        console.log(error);
+      } else {
+        array[i] = JSON.parse(body).name;
+        count++;
       }
-
-      if (response.statusCode !== 200) {
-        console.error("Status:", response.statusCode);
-        return;
+      if (count === size) {
+        for (let j = 0; j < size; j++) {
+          console.log(array[j]);
+        }
       }
-
-      const character = JSON.parse(body);
-      console.log(character.name);
     });
-  });
+  }
 });
