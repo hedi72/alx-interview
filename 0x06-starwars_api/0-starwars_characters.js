@@ -1,41 +1,31 @@
 #!/usr/bin/node
+
 const request = require("request");
 
-const filmId = process.argv[2];
-const url = `https://swapi-api.alx-tools.com/api/films/${filmId}/`;
+const movieId = process.argv[2];
+const movieEndpoint = "https://swapi-api.alx-tools.com/api/films/" + movieId;
 
-const getCharacters = () => {
-  return new Promise((resolve, reject) => {
-    request(url, (err, res, body) => {
-      if (err) {
-        console.error("error:", err);
-        reject(err);
-      } else {
-        const response = JSON.parse(body);
-        const characters = response.characters;
-        resolve(characters);
-      }
-    });
-  });
-};
-
-const getNames = async () => {
-  const characters = await getCharacters(filmId);
-
-  for (const charUrl of characters) {
-    const character = await new Promise((resolve, reject) => {
-      request(charUrl, (err, res, body) => {
-        if (err) {
-          console.error("error:", err);
-          reject(err);
-        } else {
-          const response = JSON.parse(body);
-          resolve(response);
-        }
-      });
-    });
-    console.log(character.name);
+function sendRequest(characterList, index) {
+  if (characterList.length === index) {
+    return;
   }
-};
 
-getNames();
+  request(characterList[index], (error, response, body) => {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log(JSON.parse(body).name);
+      sendRequest(characterList, index + 1);
+    }
+  });
+}
+
+request(movieEndpoint, (error, response, body) => {
+  if (error) {
+    console.log(error);
+  } else {
+    const characterList = JSON.parse(body).characters;
+
+    sendRequest(characterList, 0);
+  }
+});
