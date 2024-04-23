@@ -1,15 +1,17 @@
-
 #!/usr/bin/python3
-""" doc doc doc """
+"""This module defines the function rotate_2d_matrix"""
 
 
 def rotate_2d_matrix(matrix):
-    """doc doc docc"""
+    """this function takes as argument
+        a matrix of length n*n
+        and performs a clockwise rotation"""
+
     n = len(matrix)
-
-    for i in range(n):
-        for j in range(i, n):
-            matrix[j][i], matrix[i][j] = matrix[i][j], matrix[j][i]
-
-    for i in range(n):
-        matrix[i] = matrix[i][::-1]
+    for x in range(0, int(n / 2)):
+        for y in range(x, n-x-1):
+            temp = matrix[x][y]
+            matrix[x][y] = matrix[n-1-y][x]
+            matrix[n-1-y][x] = matrix[n-1-x][n-1-y]
+            matrix[n-1-x][n-1-y] = matrix[y][n-1-x]
+            matrix[y][n-1-x] = temp
