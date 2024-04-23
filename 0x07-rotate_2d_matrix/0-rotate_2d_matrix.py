@@ -4,7 +4,7 @@
 
 
 def rotate_2d_matrix(matrix):
-    """doc doc doc"""
+    """doc doc docc"""
     n = len(matrix)
 
     for i in range(n):
