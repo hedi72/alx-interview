@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-this module defines the function makeChange
+this module defines the function make_Change
 """
 
 
